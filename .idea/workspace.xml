@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31c0c831-1437-4340-9c51-444afb83be5d" name="Changes" comment="Setup user model">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8d74c8a-6504-4048-88a9-34abcf6528cf.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/f8d74c8a-6504-4048-88a9-34abcf6528cf.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8d74c8a-6504-4048-88a9-34abcf6528cf/storage_v2/_src_/database/person_recognition_system_database.GRMUKQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/f8d74c8a-6504-4048-88a9-34abcf6528cf/storage_v2/_src_/database/person_recognition_system_database.GRMUKQ/schema/public.abK9xQ.meta" afterDir="false" />
+    <list default="true" id="31c0c831-1437-4340-9c51-444afb83be5d" name="Changes" comment="Implement user face recognition api">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/biden-1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/biden-2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/biden-3.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/obama-1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/obama-2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,7 +143,7 @@
       <workItem from="1667042563902" duration="1049000" />
       <workItem from="1667214776982" duration="101000" />
       <workItem from="1667469406807" duration="6869000" />
-      <workItem from="1667487442341" duration="2446000" />
+      <workItem from="1667487442341" duration="3512000" />
     </task>
     <task id="LOCAL-00001" summary="Init basic django rest api server">
       <created>1666773786505</created>
@@ -169,7 +159,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667470877647</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Implement user face recognition api">
+      <created>1667489991345</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1667489991345</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,35 +186,31 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Init basic django rest api server" />
     <MESSAGE value="Setup user model" />
-    <option name="LAST_COMMIT_MESSAGE" value="Setup user model" />
+    <MESSAGE value="Implement user face recognition api" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement user face recognition api" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/server/views.py</url>
-          <line>120</line>
+          <line>136</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/server/views.py</url>
-          <line>98</line>
+          <line>114</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/server/views.py</url>
-          <line>88</line>
+          <line>104</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/server/views.py</url>
-          <line>20</line>
+          <line>19</line>
           <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/server/views.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
