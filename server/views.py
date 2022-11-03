@@ -9,10 +9,42 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from server.serializers import *
 
-# Create your views here.
 
-class PerformRecognition(APIView):
+class GenericApiView(APIView):
+    model = None
+    serializer = None
+    http_method_names = ['get', 'post']
+
+    def get(self, request):
+        return Response(self.serializer(self.model.objects.all(), many=True).data, status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data, status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class Users(GenericApiView):
+    http_method_names = ['get', 'post']
+    model = User
+    serializer = UserSerializer
+
+
+class RecognitionSessions(APIView):
+    http_method_names = ['post']
+
+    def post(self, request):
+        pass
+
+
+class FrameRecognition(APIView):
     http_method_names = ['get']
 
     def get(self, request):
@@ -27,7 +59,7 @@ class PerformRecognition(APIView):
         train_image = face_recognition.load_image_file('./resources/obama-1.jpg')
         train_encoding = face_recognition.face_encodings(train_image)[0]
 
-        results = face_recognition.compare_faces([train_encoding], test_encoding)
+        results = face_recognition.face_distance([train_encoding], test_encoding)
 
         if results[0]:
             top, right, bottom, left = face_locations[0]
@@ -42,6 +74,8 @@ class PerformRecognition(APIView):
 
             buffer = BytesIO()
             local_image_test.save(buffer, format="JPEG")
+
+            print((1 - results[0]) * 100)
 
             return Response(base64.b64encode(buffer.getvalue()), status.HTTP_200_OK)
 

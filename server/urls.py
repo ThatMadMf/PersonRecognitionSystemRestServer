@@ -3,5 +3,7 @@ from django.urls import path
 from server import views
 
 urlpatterns = [
-    path('perform-recognition', views.PerformRecognition.as_view()),
+    path('users', views.Users.as_view()),
+
+    path('perform-recognition', views.FrameRecognition.as_view()),
 ]
