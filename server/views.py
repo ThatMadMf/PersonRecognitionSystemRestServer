@@ -1,7 +1,6 @@
 import base64
 from io import BytesIO
 
-import face_recognition
 from PIL import Image
 from PIL import ImageFont
 from PIL.ImageDraw import ImageDraw
@@ -32,9 +31,44 @@ class GenericApiView(APIView):
 
 
 class Users(GenericApiView):
-    http_method_names = ['get', 'post']
     model = User
     serializer = UserSerializer
+
+
+class UserFaceEncodings(GenericApiView):
+    model = UserFaceEncoding
+    serializer = UserFaceEncodingSerializer
+
+
+class FaceRecognitionSerializer(serializers.Serializer):
+    image = serializers.ImageField(required=True, allow_empty_file=False)
+
+    class Meta:
+        fields = ['image']
+
+
+class FaceRecognition(APIView):
+    http_method_names = ['post']
+    serializer = FaceRecognitionSerializer
+
+    def get_array(self, binary):
+        return np.frombuffer(base64.decodebytes(binary), dtype=np.float32)
+
+    def post(self, request):
+        temp = list(map(list, zip(*UserFaceEncoding.objects.values_list('user_id', 'encoding'))))
+
+        users = temp[0]
+        encodings = temp[1]
+
+        input_image = face_recognition.load_image_file(request.data['image'])
+        input_encoding = face_recognition.face_encodings(input_image)[0]
+
+        face_distances = face_recognition.face_distance(encodings, input_encoding)
+
+        return Response(
+            {"userId": users[np.argmin(face_distances)], "confidence": face_distances.max()},
+            status.HTTP_200_OK,
+        )
 
 
 class RecognitionSessions(APIView):
