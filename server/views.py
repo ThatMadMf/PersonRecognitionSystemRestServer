@@ -40,18 +40,12 @@ class UserFaceEncodings(GenericApiView):
     serializer = UserFaceEncodingSerializer
 
 
-class FaceRecognitionSerializer(serializers.Serializer):
-    image = serializers.ImageField(required=True, allow_empty_file=False)
-
-    class Meta:
-        fields = ['image']
-
-
 class FaceRecognition(APIView):
     http_method_names = ['post']
     serializer = FaceRecognitionSerializer
 
-    def get_array(self, binary):
+    @staticmethod
+    def get_array(binary):
         return np.frombuffer(base64.decodebytes(binary), dtype=np.float32)
 
     def post(self, request):
@@ -88,11 +82,10 @@ class FaceRecognition(APIView):
         return Response({'result': 'not recognized'}, status.HTTP_400_BAD_REQUEST)
 
 
-class RecognitionSessions(APIView):
+class CaptureSessions(GenericApiView):
+    model = CaptureSession
+    serializer = CreateCaptureSessionSerializer
     http_method_names = ['post']
-
-    def post(self, request):
-        pass
 
 
 class FrameRecognition(APIView):

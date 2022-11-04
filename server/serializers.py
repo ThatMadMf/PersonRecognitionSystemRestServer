@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import face_recognition
 from rest_framework import serializers
 
@@ -41,12 +43,28 @@ class UserFaceEncodingSerializer(serializers.ModelSerializer):
 
 
 class CreateCaptureSessionSerializer(serializers.ModelSerializer):
-    sessionType = serializers.CharField(source='session_type')
+    attachedDeviceToken = serializers.SlugRelatedField(
+        source='attached_device',
+        write_only=True,
+        slug_field='auth_token',
+        queryset=AttachedInputDevice.objects.all(),
+    )
 
     class Meta:
         model = CaptureSession
         fields = [
             'id',
-            'sessionType',
-
+            'attachedDeviceToken',
         ]
+
+    def create(self, validated_data):
+        validated_data['session_type'] = validated_data['attached_device'].reservation.input_type
+
+        return super(CreateCaptureSessionSerializer, self).create(validated_data)
+
+
+class FaceRecognitionSerializer(serializers.Serializer):  # noqa
+    image = serializers.ImageField(required=True, allow_empty_file=False)
+
+    class Meta:
+        fields = ['image']

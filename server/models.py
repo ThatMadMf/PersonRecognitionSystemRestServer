@@ -1,3 +1,5 @@
+import uuid
+
 import numpy as np
 
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -35,6 +37,8 @@ class AttachedInputDevice(models.Model):
     device_name = models.TextField()
     device_code = models.TextField()
 
+    auth_token = models.UUIDField(default=uuid.uuid4)
+
     attached_at = models.DateTimeField(default=timezone.now)
     valid_until = models.DateTimeField(default=timezone.now)
 
@@ -48,7 +52,7 @@ class CaptureSession(models.Model):
     attached_device = models.ForeignKey(AttachedInputDevice, on_delete=models.CASCADE)
 
     start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField()
+    end_time = models.DateTimeField(null=True)
 
     class Meta:
         db_table = 'capture_sessions'

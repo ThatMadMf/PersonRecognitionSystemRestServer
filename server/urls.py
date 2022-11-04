@@ -7,5 +7,7 @@ urlpatterns = [
 
     path('user-face-encodings', views.UserFaceEncodings.as_view()),
 
+    path('capture-sessions', views.CaptureSessions.as_view()),
+
     path('recognition', views.FaceRecognition.as_view()),
 ]
