@@ -4,7 +4,7 @@ from io import BytesIO
 from PIL import Image
 from PIL import ImageFont
 from PIL.ImageDraw import ImageDraw
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,6 +28,16 @@ class GenericApiView(APIView):
             return Response(serializer.data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class Me(APIView):
+    model = User
+    serializer = UserSerializer
+    http_method_names = ['get']
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        return Response(self.serializer(request.user).data, status.HTTP_200_OK)
 
 
 class Users(GenericApiView):
