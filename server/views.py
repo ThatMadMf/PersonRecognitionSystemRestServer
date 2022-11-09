@@ -71,7 +71,7 @@ class FaceRecognition(APIView):
                 face_locations = face_recognition.face_locations(input_image)
                 input_encoding = face_recognition.face_encodings(input_image, face_locations)[0]
         except IndexError as e:
-            return Response(data={'result': 'not recognized'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'result': 'face not detected'}, status=status.HTTP_200_OK)
 
         temp = list(map(list, zip(*UserFaceEncoding.objects.values_list('user_id', 'user__first_name', 'encoding'))))
 
@@ -122,6 +122,16 @@ class CaptureSessions(GenericApiView):
     model = CaptureSession
     serializer = CreateCaptureSessionSerializer
     http_method_names = ['post']
+
+
+# class CompleteCaptureSession(APIView):
+#     model = CaptureSession
+#     http_method_names = ['post']
+#
+#     def post(self, request, session_id):
+#         session = self.model.objects.get(id=session_id)
+#
+#         session.
 
 
 class FrameRecognition(APIView):

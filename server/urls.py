@@ -13,6 +13,7 @@ urlpatterns = [
     path('user-face-encodings', views.UserFaceEncodings.as_view()),
 
     path('capture-sessions', views.CaptureSessions.as_view()),
+    # path('capture-session/<int:session_id>/complete', views.CompleteCaptureSession.as_view()),
 
     path('recognition/<str:image_type>', views.FaceRecognition.as_view()),
 ]

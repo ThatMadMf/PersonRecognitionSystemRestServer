@@ -1,7 +1,6 @@
 import uuid
 
 import numpy as np
-
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, User
 from django.db import models
@@ -61,8 +60,8 @@ class CaptureSession(models.Model):
 class SessionFrame(models.Model):
     capture_session = models.ForeignKey(CaptureSession, on_delete=models.CASCADE)
 
-    input_frame = models.BinaryField()
-    output_frame = models.BinaryField()
+    input_frame = models.BinaryField(null=True)
+    output_frame = models.BinaryField(null=True)
 
     frame_details = models.TextField()
 
@@ -70,6 +69,16 @@ class SessionFrame(models.Model):
 
     class Meta:
         db_table = 'session_frames'
+
+
+class SessionFrameUsers(models.Model):
+    session_frame = models.ForeignKey(SessionFrame, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    value = models.FloatField(default=0)
+
+    class Meta:
+        db_table = 'session_frame_users'
 
 
 class CaptureSessionResult(models.Model):
