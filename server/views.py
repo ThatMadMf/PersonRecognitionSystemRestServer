@@ -58,14 +58,26 @@ class FaceRecognition(APIView):
     def get_array(binary):
         return np.frombuffer(base64.decodebytes(binary), dtype=np.float32)
 
-    def post(self, request):
-        temp = list(map(list, zip(*UserFaceEncoding.objects.values_list('user_id', 'encoding'))))
+    def post(self, request, image_type='form-data'):
+        try:
+            if image_type == 'form-data':
+                input_image = face_recognition.load_image_file(request.data['image'])
+                face_locations = face_recognition.face_locations(input_image)[0]
+                input_encoding = face_recognition.face_encodings(input_image, face_locations)[0]
+            else:
+                input_bytes = BytesIO(base64.b64decode(request.data['image']))
+                pil_image = Image.open(input_bytes)
+                input_image = np.asarray(pil_image)
+                face_locations = face_recognition.face_locations(input_image)
+                input_encoding = face_recognition.face_encodings(input_image, face_locations)[0]
+        except IndexError as e:
+            return Response(data={'result': 'not recognized'}, status=status.HTTP_400_BAD_REQUEST)
+
+        temp = list(map(list, zip(*UserFaceEncoding.objects.values_list('user_id', 'user__first_name', 'encoding'))))
 
         users = temp[0]
-        encodings = temp[1]
-
-        input_image = face_recognition.load_image_file(request.data['image'])
-        input_encoding = face_recognition.face_encodings(input_image)[0]
+        names = temp[1]
+        encodings = temp[2]
 
         # See if the face is a match for the known face(s)
         matches = face_recognition.compare_faces(encodings, input_encoding)
@@ -80,16 +92,30 @@ class FaceRecognition(APIView):
         face_distances = face_recognition.face_distance(encodings, input_encoding)
         best_match_index = np.argmin(face_distances)
         if matches[best_match_index]:
+            top, right, bottom, left = face_locations[0]
+
+            local_image_test = Image.fromarray(input_image)
+
+            aggregated_image = ImageDraw(local_image_test)
+            aggregated_image.rectangle([left, bottom, right, top], outline='red', width=5)
+
+            font = ImageFont.truetype('UbuntuMono-R.ttf', 32)
+            aggregated_image.text((left, bottom), names[best_match_index], font=font, fill=(255, 0, 0))
+
+            buffer = BytesIO()
+            local_image_test.save(buffer, format="JPEG")
+
             return Response(
                 {
                     'result': 'recognized',
                     'userId': users[best_match_index],
                     'confidence': face_distances.max(),
+                    'image': base64.b64encode(buffer.getvalue()),
                 },
                 status.HTTP_200_OK,
             )
 
-        return Response({'result': 'not recognized'}, status.HTTP_400_BAD_REQUEST)
+        return Response({'result': 'not recognized'}, status.HTTP_200_OK)
 
 
 class CaptureSessions(GenericApiView):
