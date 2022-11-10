@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 import face_recognition
 from rest_framework import serializers
 
@@ -9,6 +7,7 @@ from server.models import *
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     firstName = serializers.CharField(source='first_name')
+    lastName = serializers.CharField(source='last_name')
 
     class Meta:
         model = User
@@ -16,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'firstName',
+            'lastName',
         ]
 
 

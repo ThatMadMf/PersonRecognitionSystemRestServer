@@ -71,7 +71,7 @@ class SessionFrame(models.Model):
         db_table = 'session_frames'
 
 
-class SessionFrameUsers(models.Model):
+class SessionFrameUser(models.Model):
     session_frame = models.ForeignKey(SessionFrame, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -89,3 +89,13 @@ class CaptureSessionResult(models.Model):
 
     class Meta:
         db_table = 'capture_session_results'
+
+
+class CaptureSessionResultUser(models.Model):
+    capture_session_result = models.OneToOneField(CaptureSessionResult, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    value = models.FloatField()
+
+    class Meta:
+        db_table = 'capture_session_result_users'

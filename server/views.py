@@ -1,12 +1,17 @@
 import base64
+from datetime import timedelta
 from io import BytesIO
 
 from PIL import Image
 from PIL import ImageFont
 from PIL.ImageDraw import ImageDraw
+from django.db import transaction
+from django.db.models import Avg
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from six import text_type
 
 from server.serializers import *
 
@@ -124,52 +129,52 @@ class CaptureSessions(GenericApiView):
     http_method_names = ['post']
 
 
-# class CompleteCaptureSession(APIView):
-#     model = CaptureSession
-#     http_method_names = ['post']
-#
-#     def post(self, request, session_id):
-#         session = self.model.objects.get(id=session_id)
-#
-#         session.
+class CompleteCaptureSession(APIView):
+    model = CaptureSession
+    http_method_names = ['post']
 
+    def post(self, request, session_id):
+        users = SessionFrameUser.objects.filter(
+            session_frame__capture_session_id=session_id,
+        ).values('user_id').distinct()
 
-class FrameRecognition(APIView):
-    http_method_names = ['get']
+        result = {}
 
-    def get(self, request):
-        image_test = face_recognition.load_image_file('./resources/obama-2.jpg')
-        test_encoding = face_recognition.face_encodings(image_test)[0]
+        for u in users:
+            result[u['user_id']] = SessionFrameUser.objects.filter(
+                session_frame__capture_session_id=session_id,
+                user_id=u['user_id'],
+            ).aggregate(Avg('value'))['value__avg']
 
-        face_locations = face_recognition.face_locations(image_test)
+        authorizer_user_id = max(result, key=result.get)
 
-        if len(face_locations) == 0:
-            return Response({"message": "no face detected"}, status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                sid = transaction.savepoint()
+                session = CaptureSession.objects.get(id=session_id)
 
-        train_image = face_recognition.load_image_file('./resources/obama-1.jpg')
-        train_encoding = face_recognition.face_encodings(train_image)[0]
+                session.end_time = timezone.now()
+                session.save()
 
-        results = face_recognition.face_distance([train_encoding], test_encoding)
+                session_result = CaptureSessionResult.objects.create(
+                    capture_session=session,
+                    result_type='SUCCESS',
+                    result_details='user recognized',
+                )
 
-        if results[0]:
-            top, right, bottom, left = face_locations[0]
+                CaptureSessionResultUser.objects.create(
+                    capture_session_result=session_result,
+                    user_id=authorizer_user_id,
+                    value=result[authorizer_user_id],
+                )
+        except Exception as e:
+            transaction.savepoint_rollback(sid)
+            return Response({'result': 'not authorized', 'message': str(e)}, status.HTTP_400_BAD_REQUEST)
 
-            local_image_test = Image.fromarray(image_test)
+        transaction.savepoint_commit(sid)
 
-            aggregated_image = ImageDraw(local_image_test)
-            aggregated_image.rectangle([left, bottom, right, top], outline='red', width=5)
+        refresh = TokenObtainPairSerializer.get_token(User.objects.get(id=authorizer_user_id))
+        access_token = refresh.access_token
+        access_token.set_exp(lifetime=timedelta(hours=24))
 
-            font = ImageFont.truetype('UbuntuMono-R.ttf', 32)
-            aggregated_image.text((left, bottom), "OBEMA >:(", font=font, fill=(255, 0, 0))
-
-            buffer = BytesIO()
-            local_image_test.save(buffer, format="JPEG")
-
-            print((1 - results[0]) * 100)
-
-            return Response(base64.b64encode(buffer.getvalue()), status.HTTP_200_OK)
-
-        return Response(
-            {"message": "Could not recognize"},
-            status.HTTP_200_OK,
-        )
+        return Response({'result': 'authorized', 'token': text_type(access_token)}, status.HTTP_200_OK)
