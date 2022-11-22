@@ -2,11 +2,12 @@ import base64
 from datetime import timedelta
 from io import BytesIO
 
-from PIL import Image
+from PIL import Image, ImageStat
 from PIL import ImageFont
 from PIL.ImageDraw import ImageDraw
 from django.db import transaction
 from django.db.models import Avg
+from numpy.linalg import norm
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -63,11 +64,19 @@ class FaceRecognition(APIView):
     def get_array(binary):
         return np.frombuffer(base64.decodebytes(binary), dtype=np.float32)
 
+    @staticmethod
+    def get_brightness(img):
+        im = Image.open(img).convert('L')
+        stat = ImageStat.Stat(im)
+        return stat.mean[0]
+
     def post(self, request, image_type='form-data'):
         try:
             if image_type == 'form-data':
+                print(f'Brightness: {self.get_brightness(request.data["image"])}')
+
                 input_image = face_recognition.load_image_file(request.data['image'])
-                face_locations = face_recognition.face_locations(input_image)[0]
+                face_locations = face_recognition.face_locations(input_image)
                 input_encoding = face_recognition.face_encodings(input_image, face_locations)[0]
             else:
                 input_bytes = BytesIO(base64.b64decode(request.data['image']))
