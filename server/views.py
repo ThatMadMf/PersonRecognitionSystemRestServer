@@ -7,7 +7,6 @@ from PIL import ImageFont
 from PIL.ImageDraw import ImageDraw
 from django.db import transaction
 from django.db.models import Avg
-from numpy.linalg import norm
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,9 +20,13 @@ class GenericApiView(APIView):
     model = None
     serializer = None
     http_method_names = ['get', 'post']
+    orders_clauses = []
 
     def get(self, request):
-        return Response(self.serializer(self.model.objects.all(), many=True).data, status.HTTP_200_OK)
+        return Response(
+            self.serializer(self.model.objects.all().order_by(*self.orders_clauses), many=True).data,
+            status.HTTP_200_OK,
+        )
 
     def post(self, request):
         serializer = self.serializer(data=request.data)
@@ -135,7 +138,8 @@ class FaceRecognition(APIView):
 class CaptureSessions(GenericApiView):
     model = CaptureSession
     serializer = CreateCaptureSessionSerializer
-    http_method_names = ['post']
+    http_method_names = ['get', 'post']
+    orders_clauses = ['-end_time']
 
 
 class CompleteCaptureSession(APIView):

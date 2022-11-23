@@ -49,12 +49,22 @@ class CreateCaptureSessionSerializer(serializers.ModelSerializer):
         slug_field='auth_token',
         queryset=AttachedInputDevice.objects.all(),
     )
+    deviceName = serializers.CharField(source='device_name', read_only=True)
+    startTime = serializers.DateTimeField(source='start_time', read_only=True)
+    endTime = serializers.DateTimeField(source='end_time', read_only=True)
+    resultType = serializers.CharField(source='result_type', read_only=True)
+    resultDetails = serializers.CharField(source='result_details', read_only=True)
 
     class Meta:
         model = CaptureSession
         fields = [
             'id',
             'attachedDeviceToken',
+            'deviceName',
+            'startTime',
+            'endTime',
+            'resultType',
+            'resultDetails',
         ]
 
     def create(self, validated_data):

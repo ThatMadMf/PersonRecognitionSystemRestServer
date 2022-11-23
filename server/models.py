@@ -53,6 +53,18 @@ class CaptureSession(models.Model):
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(null=True)
 
+    @property
+    def device_name(self):
+        return self.attached_device.device_name
+
+    @property
+    def result_type(self):
+        return self.capturesessionresult.result_type if self.capturesessionresult is not None else '—'
+
+    @property
+    def result_details(self):
+        return self.capturesessionresult.result_details if self.capturesessionresult is not None else '—'
+
     class Meta:
         db_table = 'capture_sessions'
 
