@@ -16,4 +16,6 @@ urlpatterns = [
     path('capture-sessions/<int:session_id>/complete', views.CompleteCaptureSession.as_view()),
 
     path('recognition/<str:image_type>', views.FaceRecognition.as_view()),
+
+    path('session-frames', views.SessionFrames.as_view()),
 ]

@@ -191,3 +191,10 @@ class CompleteCaptureSession(APIView):
         access_token.set_exp(lifetime=timedelta(hours=24))
 
         return Response({'result': 'authorized', 'token': text_type(access_token)}, status.HTTP_200_OK)
+
+
+class SessionFrames(GenericApiView):
+    model = SessionFrame
+    serializer = SessionFrameSerializer
+    http_method_names = ['get']
+    orders_clauses = ['-timestamp']
