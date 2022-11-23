@@ -100,3 +100,22 @@ class SessionFrameSerializer(serializers.ModelSerializer):
             'timestamp',
             'captureSessionId',
         ]
+
+
+class AttachedInputDeviceSerializer(serializers.ModelSerializer):
+    deviceName = serializers.CharField(source='device_name', read_only=True)
+    attachedAt = serializers.DateTimeField(source='attached_at', read_only=True)
+    validUntil = serializers.DateTimeField(source='valid_until', read_only=True)
+    inputType = serializers.CharField(source='input_type', read_only=True)
+    authorizationType = serializers.CharField(source='authorization_type', read_only=True)
+
+    class Meta:
+        model = AttachedInputDevice
+        fields = [
+            'id',
+            'deviceName',
+            'attachedAt',
+            'validUntil',
+            'inputType',
+            'authorizationType',
+        ]

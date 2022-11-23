@@ -198,3 +198,10 @@ class SessionFrames(GenericApiView):
     serializer = SessionFrameSerializer
     http_method_names = ['get']
     orders_clauses = ['-timestamp']
+
+
+class AttachedDevices(GenericApiView):
+    model = AttachedInputDevice
+    serializer = AttachedInputDeviceSerializer
+    http_method_names = ['get']
+    orders_clauses = ['id']

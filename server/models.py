@@ -41,6 +41,14 @@ class AttachedInputDevice(models.Model):
     attached_at = models.DateTimeField(default=timezone.now)
     valid_until = models.DateTimeField(default=timezone.now)
 
+    @property
+    def input_type(self):
+        return self.reservation.input_type
+
+    @property
+    def authorization_type(self):
+        return self.reservation.authorization_type
+
     class Meta:
         db_table = 'attached_input_devices'
 

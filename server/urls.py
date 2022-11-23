@@ -18,4 +18,6 @@ urlpatterns = [
     path('recognition/<str:image_type>', views.FaceRecognition.as_view()),
 
     path('session-frames', views.SessionFrames.as_view()),
+
+    path('devices', views.AttachedDevices.as_view()),
 ]
