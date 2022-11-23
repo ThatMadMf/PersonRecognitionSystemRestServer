@@ -72,8 +72,8 @@ class CaptureSession(models.Model):
 class SessionFrame(models.Model):
     capture_session = models.ForeignKey(CaptureSession, on_delete=models.CASCADE)
 
-    input_frame = models.BinaryField(null=True)
-    output_frame = models.BinaryField(null=True)
+    input_frame = models.TextField(null=True)
+    output_frame = models.TextField(null=True)
 
     frame_details = models.TextField()
 
