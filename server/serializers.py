@@ -8,6 +8,8 @@ class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     firstName = serializers.CharField(source='first_name')
     lastName = serializers.CharField(source='last_name')
+    lastLogin = serializers.DateTimeField(source='last_login', read_only=True)
+    dateJoined = serializers.DateTimeField(source='date_joined', read_only=True)
 
     class Meta:
         model = User
@@ -16,6 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'firstName',
             'lastName',
+            'lastLogin',
+            'dateJoined',
         ]
 
 
