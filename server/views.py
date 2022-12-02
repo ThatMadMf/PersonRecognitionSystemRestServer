@@ -38,6 +38,14 @@ class GenericApiView(APIView):
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, id):
+        try:
+            self.model.objects.get(id=id).delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except self.model.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class Me(APIView):
     model = User
@@ -52,6 +60,7 @@ class Me(APIView):
 class Users(GenericApiView):
     model = User
     serializer = UserSerializer
+    http_method_names = ['get', 'post', 'delete']
 
 
 class UserFaceEncodings(GenericApiView):
