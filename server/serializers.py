@@ -85,8 +85,6 @@ class FaceRecognitionSerializer(serializers.Serializer):  # noqa
 
 
 class SessionFrameSerializer(serializers.ModelSerializer):
-    inputFrame = serializers.CharField(source='input_frame', read_only=True)
-    outputFrame = serializers.CharField(source='output_frame', read_only=True)
     frameDetails = serializers.CharField(source='frame_details', read_only=True)
     captureSessionId = serializers.IntegerField(source='capture_session_id', read_only=True)
 
@@ -94,8 +92,6 @@ class SessionFrameSerializer(serializers.ModelSerializer):
         model = SessionFrame
         fields = [
             'id',
-            'inputFrame',
-            'outputFrame',
             'frameDetails',
             'timestamp',
             'captureSessionId',

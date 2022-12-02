@@ -205,3 +205,22 @@ class AttachedDevices(GenericApiView):
     serializer = AttachedInputDeviceSerializer
     http_method_names = ['get']
     orders_clauses = ['id']
+
+
+class SessionFrameImages(APIView):
+    model = SessionFrame
+    http_method_names = ['get']
+
+    def get(self, request, frame_id):
+        frame_type = request.query_params['type']
+        try:
+            frame = self.model.objects.get(id=frame_id)
+        except self.model.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if frame_type == 'input':
+            return Response(frame.input_frame, status.HTTP_200_OK)
+        elif frame_type == 'output':
+            return Response(frame.output_frame, status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
