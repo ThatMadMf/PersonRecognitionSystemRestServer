@@ -19,7 +19,6 @@ importlib-metadata==5.0.0
 imutils==0.5.4
 jmespath==0.10.0
 numpy==1.21.6
-opencv-python==4.6.0.66
 Pillow==9.2.0
 psycopg2-binary==2.8.5
 PyJWT==1.7.1
