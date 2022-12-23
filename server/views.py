@@ -1,4 +1,5 @@
 import base64
+import os
 from datetime import timedelta
 from io import BytesIO
 
@@ -124,7 +125,9 @@ class FaceRecognition(APIView):
 
             aggregated_image = ImageDraw(local_image_test)
             aggregated_image.rectangle([left, bottom, right, top], outline='red', width=5)
-            aggregated_image.text((left, bottom), names[best_match_index], fill=(255, 0, 0))
+
+            font = ImageFont.truetype(os.getenv('FONT_NAME', 'UbuntuMono-R.ttf'), 32)
+            aggregated_image.text((left, bottom), names[best_match_index], font=font, fill=(255, 0, 0))
 
             buffer = BytesIO()
             local_image_test.save(buffer, format="JPEG")
