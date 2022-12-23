@@ -160,6 +160,15 @@ class CompleteCaptureSession(APIView):
             session_frame__capture_session_id=session_id,
         ).values('user_id').distinct()
 
+        if len(users) == 0:
+            CaptureSessionResult.objects.create(
+                capture_session=CaptureSession.objects.get(id=session_id),
+                result_type='NOT_RECOGNIZED',
+                result_details='no user was recognized',
+            )
+
+            return Response({'result': 'not authorized'}, status.HTTP_403_FORBIDDEN)
+
         result = {}
 
         for u in users:
@@ -195,9 +204,15 @@ class CompleteCaptureSession(APIView):
 
         transaction.savepoint_commit(sid)
 
-        refresh = TokenObtainPairSerializer.get_token(User.objects.get(id=authorizer_user_id))
+        user = User.objects.get(id=authorizer_user_id)
+
+        refresh = TokenObtainPairSerializer.get_token(user)
+
         access_token = refresh.access_token
         access_token.set_exp(lifetime=timedelta(hours=24))
+
+        user.last_login = timezone.now()
+        user.save()
 
         return Response({'result': 'authorized', 'token': text_type(access_token)}, status.HTTP_200_OK)
 
