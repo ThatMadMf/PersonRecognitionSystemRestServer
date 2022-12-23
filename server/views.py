@@ -160,12 +160,20 @@ class CompleteCaptureSession(APIView):
             session_frame__capture_session_id=session_id,
         ).values('user_id').distinct()
 
+        try:
+            session = CaptureSession.objects.get(id=session_id)
+        except CaptureSession.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         if len(users) == 0:
             CaptureSessionResult.objects.create(
                 capture_session=CaptureSession.objects.get(id=session_id),
                 result_type='NOT_RECOGNIZED',
                 result_details='no user was recognized',
             )
+
+            session.end_time = timezone.now()
+            session.save()
 
             return Response({'result': 'not authorized'}, status.HTTP_403_FORBIDDEN)
 
@@ -182,7 +190,6 @@ class CompleteCaptureSession(APIView):
         try:
             with transaction.atomic():
                 sid = transaction.savepoint()
-                session = CaptureSession.objects.get(id=session_id)
 
                 session.end_time = timezone.now()
                 session.save()
